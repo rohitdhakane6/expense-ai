@@ -34,7 +34,7 @@ export function Waitlist() {
 
       setIsSubmitted(true);
       setEmail("");
-    } catch (err) {
+    } catch (_err) {
       setError(true);
     } finally {
       setIsSubmitting(false);
