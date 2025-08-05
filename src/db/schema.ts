@@ -6,7 +6,12 @@ import {
   decimal,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { email } from "zod";
+
+export const waitlist = pgTable("waitlist", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: varchar("email", { length: 150 }).notNull().unique(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -39,4 +44,3 @@ export const expenses = pgTable("expenses", {
   date: timestamp("date", { withTimezone: true }).defaultNow(),
   receiptUrl: varchar("receipt_url", { length: 500 }), // Cloudflare R2 URL if uploaded
 });
-
