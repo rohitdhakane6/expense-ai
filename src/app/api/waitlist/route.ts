@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { waitlist } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { resend } from "@/lib/resend";
+import { ThankYouWaitlistEmail } from "../../../emails/wait-list";
 
 export async function POST(req: Request) {
   try {
@@ -27,6 +29,12 @@ export async function POST(req: Request) {
     }
 
     await db.insert(waitlist).values({ email });
+    resend.emails.send({
+      from: "Rohit from ExpenseAI  <rohit@expenseai.tech>",
+      to: email,
+      subject: "Thanks for joining the Expense AI waitlist!",
+      react: ThankYouWaitlistEmail(),
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
