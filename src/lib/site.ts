@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'ExpenseAI – Smart Expense & Billing Tracker',
     description: 'ExpenseAI is your intelligent solution for tracking expenses and automating billing.',
-    images: [`${assetBaseUrl}/twitter-card.png`],
+    images: [`${assetBaseUrl}/og-image.png`],
     creator: '@RohitDhakane_',
   },
 }
