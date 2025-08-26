@@ -32,7 +32,7 @@ export const syncUser = inngest.createFunction(
       }
 
       const primaryEmail = email_addresses.find(
-        (e: any) => e.id === primary_email_address_id
+        (e: any) => e.id === primary_email_address_id,
       );
 
       if (!primaryEmail?.email_address) {
@@ -40,6 +40,7 @@ export const syncUser = inngest.createFunction(
       }
 
       await db.insert(users).values({
+        id,
         email: primaryEmail.email_address,
         name: `${first_name} ${last_name}`,
       });
@@ -57,5 +58,5 @@ export const syncUser = inngest.createFunction(
         details: (error as Error).message,
       };
     }
-  }
+  },
 );

@@ -5,42 +5,119 @@ import {
   text,
   decimal,
   timestamp,
+  primaryKey,
+  boolean,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { createInsertSchema } from "drizzle-zod";
 
-export const waitlist = pgTable("waitlist", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  email: varchar("email", { length: 150 }).notNull().unique(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-});
+// =============================================================================
+// CONSTANTS & TYPES
+// =============================================================================
 
+export const USER_WORKSPACE_ROLES = ["admin", "member"] as const;
+export type UserWorkspaceRole = (typeof USER_WORKSPACE_ROLES)[number];
+
+// =============================================================================
+// TABLES
+// =============================================================================
+
+// Users Table
 export const users = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: varchar("id", { length: 255 }).primaryKey(),
   name: varchar("name", { length: 100 }),
   email: varchar("email", { length: 150 }).notNull().unique(),
-  phone: varchar("phone", { length: 15 }).unique(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  phone: varchar("phone", { length: 20 }).unique(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });
 
-// Project
-export const projects = pgTable("projects", {
+// Workspaces Table
+export const workspaces = pgTable("workspaces", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 150 }).notNull(),
   description: text("description"),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  createdBy: varchar("created_by", { length: 255 })
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });
 
-// Expense
-export const expenses = pgTable("expenses", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  projectId: uuid("project_id")
-    .notNull()
-    .references(() => projects.id, { onDelete: "cascade" }),
-  title: varchar("title", { length: 150 }).notNull(), // e.g., "cement"
-  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
-  note: text("note"),
-  date: timestamp("date", { withTimezone: true }).defaultNow(),
-  receiptUrl: varchar("receipt_url", { length: 500 }), // Cloudflare R2 URL if uploaded
+// Junction Table - Users to Workspaces (Many-to-Many)
+export const usersToWorkspaces = pgTable(
+  "users_to_workspaces",
+  {
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    workspaceId: uuid("workspace_id")
+      .notNull()
+      .references(() => workspaces.id, { onDelete: "cascade" }),
+
+    role: varchar("role", { length: 50, enum: USER_WORKSPACE_ROLES })
+      .notNull()
+      .default("member"),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.workspaceId] }),
+  }),
+);
+
+// =============================================================================
+// RELATIONS
+// =============================================================================
+
+// Users to Workspaces Relations (Junction Table)
+export const usersRelations = relations(users, ({ many }) => ({
+  workspaces: many(usersToWorkspaces),
+}));
+
+export const workspacesRelations = relations(workspaces, ({ many, one }) => ({
+  users: many(usersToWorkspaces),
+  creator: one(users, {
+    fields: [workspaces.createdBy],
+    references: [users.id],
+  }),
+}));
+
+export const usersToWorkspacesRelations = relations(
+  usersToWorkspaces,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [usersToWorkspaces.userId],
+      references: [users.id],
+    }),
+    workspace: one(workspaces, {
+      fields: [usersToWorkspaces.workspaceId],
+      references: [workspaces.id],
+    }),
+  }),
+);
+
+// =============================================================================
+// SCHEMAS
+// =============================================================================
+
+export const WorkspacesCreateSchema = createInsertSchema(workspaces, {
+  name: (schema) => schema.min(3).max(150),
+  description: (schema) => schema.max(500).optional(),
+  createdBy: (schema) => schema.optional(),
 });
