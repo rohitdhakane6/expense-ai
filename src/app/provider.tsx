@@ -5,6 +5,7 @@ import { ThemeProvider, useTheme } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { dark } from "@clerk/themes";
 import React from "react";
+import { Toaster } from "@/components/ui/sonner";
 
 function ClerkWithTheme({ children }: { children: React.ReactNode }) {
   const { theme, resolvedTheme } = useTheme();
@@ -41,7 +42,10 @@ export default function Provider({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <QueryClientProvider client={queryClient}>
-        <ClerkWithTheme>{children}</ClerkWithTheme>
+        <ClerkWithTheme>
+          <Toaster richColors position="top-center" />
+          {children}
+        </ClerkWithTheme>
       </QueryClientProvider>
     </ThemeProvider>
   );

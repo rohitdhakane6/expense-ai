@@ -1,7 +1,8 @@
 import { reset, seed } from "drizzle-seed";
 import { db } from "@/db";
-import { users, workspaces, usersToWorkspaces } from "@/db/schema";
+import { users, budgets, transactions } from "@/db/schema";
 import * as schema from "@/db/schema";
+import { subDays } from "date-fns";
 
 async function main() {
   console.log("🔄 Resetting database...");
@@ -10,44 +11,509 @@ async function main() {
 
   console.log("🌱 Seeding database...");
 
-  // 1. Seed 10 users (we don’t need the result here)
-  await seed(db, { users }).refine((r) => ({
-    users: {
-      columns: {
-        name: r.fullName(),
-        phone: r.phoneNumber(),
-      },
-      count: 10,
-    },
-  }));
-
-  // 2. Grab one user manually as creator
-  const creator = await db.select().from(users);
-
-  // 3. Insert workspace with creator
-  const [workspace] = await db
-    .insert(workspaces)
+  // 1. Create one user
+  const [user] = await db
+    .insert(users)
     .values({
-      name: "Acme Corp",
-      createdBy: creator[0].id,
-      description: " Default workspace for Acme Corp",
+      id: "user_30pWB62phtLozj9b3XKlJkl3Pkt",
+      name: "Rohit Dhakane",
+      email: "rohitdhakne6@gmail.com",
     })
     .returning();
 
-  // 4. Add creator as admin in junction table
-  await db.insert(usersToWorkspaces).values({
-    userId: creator[0].id,
-    workspaceId: workspace.id,
-    role: "admin",
+  // 2. Create exactly one budget for the user
+  await db.insert(budgets).values({
+    userId: user.id,
+    amount: "5000.00", // must be string
   });
 
-  await db.insert(usersToWorkspaces).values(
-    creator.slice(1).map((user) => ({
-      userId: user.id,
-      workspaceId: workspace.id,
-      role: "member" as "member",
-    })),
-  );
+  // 3. Create transactions for the user
+
+  const startDate = new Date();
+  const userId = user.id;
+
+  await db.insert(transactions).values([
+    {
+      userId,
+      type: "income",
+      amount: "2000.00",
+      name: "Salary",
+      category: "other",
+      transactionDate: subDays(startDate, 0),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "150.00",
+      name: "Groceries",
+      category: "groceries",
+      transactionDate: subDays(startDate, 1),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "50.00",
+      name: "Transport",
+      category: "transportation",
+      transactionDate: subDays(startDate, 2),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "300.00",
+      name: "Freelance Work",
+      category: "other",
+      transactionDate: subDays(startDate, 3),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "80.00",
+      name: "Electricity Bill",
+      category: "utilities",
+      transactionDate: subDays(startDate, 4),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "60.00",
+      name: "Water Bill",
+      category: "utilities",
+      transactionDate: subDays(startDate, 5),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "120.00",
+      name: "Internet Bill",
+      category: "utilities",
+      transactionDate: subDays(startDate, 6),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "200.00",
+      name: "Dining Out",
+      category: "dining",
+      transactionDate: subDays(startDate, 7),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "500.00",
+      name: "Stock Dividend",
+      category: "other",
+      transactionDate: subDays(startDate, 8),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "75.00",
+      name: "Gym Membership",
+      category: "health",
+      transactionDate: subDays(startDate, 9),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "45.00",
+      name: "Mobile Recharge",
+      category: "utilities",
+      transactionDate: subDays(startDate, 10),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "100.00",
+      name: "Gift from Friend",
+      category: "other",
+      transactionDate: subDays(startDate, 11),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "300.00",
+      name: "Clothing",
+      category: "shopping",
+      transactionDate: subDays(startDate, 12),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "25.00",
+      name: "Coffee",
+      category: "dining",
+      transactionDate: subDays(startDate, 13),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "400.00",
+      name: "Side Hustle",
+      category: "other",
+      transactionDate: subDays(startDate, 14),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "100.00",
+      name: "Books",
+      category: "education",
+      transactionDate: subDays(startDate, 15),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "500.00",
+      name: "House Rent",
+      category: "rent",
+      transactionDate: subDays(startDate, 16),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "250.00",
+      name: "Medical Expenses",
+      category: "health",
+      transactionDate: subDays(startDate, 17),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "600.00",
+      name: "Bonus",
+      category: "other",
+      transactionDate: subDays(startDate, 18),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "90.00",
+      name: "Streaming Subscriptions",
+      category: "entertainment",
+      transactionDate: subDays(startDate, 19),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "1800.00",
+      name: "Salary",
+      category: "other",
+      transactionDate: subDays(startDate, 20),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "120.00",
+      name: "Groceries",
+      category: "groceries",
+      transactionDate: subDays(startDate, 21),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "60.00",
+      name: "Transport",
+      category: "transportation",
+      transactionDate: subDays(startDate, 22),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "250.00",
+      name: "Freelance Work",
+      category: "other",
+      transactionDate: subDays(startDate, 23),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "70.00",
+      name: "Electricity Bill",
+      category: "utilities",
+      transactionDate: subDays(startDate, 24),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "50.00",
+      name: "Water Bill",
+      category: "utilities",
+      transactionDate: subDays(startDate, 25),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "100.00",
+      name: "Internet Bill",
+      category: "utilities",
+      transactionDate: subDays(startDate, 26),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "180.00",
+      name: "Dining Out",
+      category: "dining",
+      transactionDate: subDays(startDate, 27),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "400.00",
+      name: "Stock Dividend",
+      category: "other",
+      transactionDate: subDays(startDate, 28),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "85.00",
+      name: "Gym Membership",
+      category: "health",
+      transactionDate: subDays(startDate, 29),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "40.00",
+      name: "Mobile Recharge",
+      category: "utilities",
+      transactionDate: subDays(startDate, 30),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "150.00",
+      name: "Gift from Friend",
+      category: "other",
+      transactionDate: subDays(startDate, 1),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "320.00",
+      name: "Clothing",
+      category: "shopping",
+      transactionDate: subDays(startDate, 2),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "30.00",
+      name: "Coffee",
+      category: "dining",
+      transactionDate: subDays(startDate, 3),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "350.00",
+      name: "Side Hustle",
+      category: "other",
+      transactionDate: subDays(startDate, 4),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "110.00",
+      name: "Books",
+      category: "education",
+      transactionDate: subDays(startDate, 5),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "480.00",
+      name: "House Rent",
+      category: "rent",
+      transactionDate: subDays(startDate, 6),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "220.00",
+      name: "Medical Expenses",
+      category: "health",
+      transactionDate: subDays(startDate, 7),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "550.00",
+      name: "Bonus",
+      category: "other",
+      transactionDate: subDays(startDate, 8),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "95.00",
+      name: "Streaming Subscriptions",
+      category: "entertainment",
+      transactionDate: subDays(startDate, 9),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "2100.00",
+      name: "Salary",
+      category: "other",
+      transactionDate: subDays(startDate, 10),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "140.00",
+      name: "Groceries",
+      category: "groceries",
+      transactionDate: subDays(startDate, 11),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "55.00",
+      name: "Transport",
+      category: "transportation",
+      transactionDate: subDays(startDate, 12),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "280.00",
+      name: "Freelance Work",
+      category: "other",
+      transactionDate: subDays(startDate, 13),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "75.00",
+      name: "Electricity Bill",
+      category: "utilities",
+      transactionDate: subDays(startDate, 14),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "65.00",
+      name: "Water Bill",
+      category: "utilities",
+      transactionDate: subDays(startDate, 15),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "110.00",
+      name: "Internet Bill",
+      category: "utilities",
+      transactionDate: subDays(startDate, 16),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "190.00",
+      name: "Dining Out",
+      category: "dining",
+      transactionDate: subDays(startDate, 17),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "150.00",
+      name: "Stock Dividend",
+      category: "other",
+      transactionDate: subDays(startDate, 18),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "80.00",
+      name: "Gym Membership",
+      category: "health",
+      transactionDate: subDays(startDate, 19),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "50.00",
+      name: "Mobile Recharge",
+      category: "utilities",
+      transactionDate: subDays(startDate, 20),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "120.00",
+      name: "Gift from Friend",
+      category: "other",
+      transactionDate: subDays(startDate, 21),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "310.00",
+      name: "Clothing",
+      category: "shopping",
+      transactionDate: subDays(startDate, 22),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "32.00",
+      name: "Coffee",
+      category: "dining",
+      transactionDate: subDays(startDate, 23),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "370.00",
+      name: "Side Hustle",
+      category: "other",
+      transactionDate: subDays(startDate, 24),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "120.00",
+      name: "Books",
+      category: "education",
+      transactionDate: subDays(startDate, 25),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "490.00",
+      name: "House Rent",
+      category: "rent",
+      transactionDate: subDays(startDate, 26),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "240.00",
+      name: "Medical Expenses",
+      category: "health",
+      transactionDate: subDays(startDate, 27),
+    },
+    {
+      userId,
+      type: "income",
+      amount: "280.00",
+      name: "Bonus",
+      category: "other",
+      transactionDate: subDays(startDate, 28),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "100.00",
+      name: "Streaming Subscriptions",
+      category: "entertainment",
+      transactionDate: subDays(startDate, 29),
+    },
+  ]);
 
   console.log("✅ Database seeded successfully.");
 }

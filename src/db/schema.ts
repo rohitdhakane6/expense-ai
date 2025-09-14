@@ -5,18 +5,24 @@ import {
   text,
   decimal,
   timestamp,
-  primaryKey,
   boolean,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
+import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 
 // =============================================================================
-// CONSTANTS & TYPES
+// SHARED
 // =============================================================================
 
-export const USER_WORKSPACE_ROLES = ["admin", "member"] as const;
-export type UserWorkspaceRole = (typeof USER_WORKSPACE_ROLES)[number];
+const timestamps = {
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
+};
 
 // =============================================================================
 // TABLES
@@ -28,96 +34,93 @@ export const users = pgTable("users", {
   name: varchar("name", { length: 100 }),
   email: varchar("email", { length: 150 }).notNull().unique(),
   phone: varchar("phone", { length: 20 }).unique(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  ...timestamps,
 });
 
-// Workspaces Table
-export const workspaces = pgTable("workspaces", {
+// Budgets Table (1:1 with users)
+export const budgets = pgTable("budgets", {
   id: uuid("id").primaryKey().defaultRandom(),
-  name: varchar("name", { length: 150 }).notNull(),
-  description: text("description"),
-  createdBy: varchar("created_by", { length: 255 })
+  userId: varchar("user_id", { length: 255 })
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" })
+    .unique(), // ensures one budget per user
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  isLastAlertSent: boolean("is_last_alert_sent").default(false).notNull(),
+  ...timestamps,
+});
+
+// Transactions Table (1:N with users)
+export const typeEnum = pgEnum("transaction_type", ["income", "expense"]);
+export const recurringIntervalEnum = pgEnum("recurring_interval", [
+  "daily",
+  "weekly",
+  "monthly",
+  "yearly",
+]);
+export const categoryEnum = pgEnum("transaction_category", [
+  "groceries",
+  "utilities",
+  "rent",
+  "entertainment",
+  "transportation",
+  "dining",
+  "health",
+  "shopping",
+  "education",
+  "travel",
+  "other",
+]);
+
+export const transactions = pgTable("transactions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: varchar("user_id", { length: 255 })
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  type: typeEnum().notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  category: categoryEnum().default("other").notNull(),
+  isRecurring: boolean("is_recurring").default(false).notNull(),
+  recurringInterval: recurringIntervalEnum(), // now enum instead of varchar
+  nextRecurringDate: timestamp("next_recurring_date", { withTimezone: true }),
+  lastProcessedDate: timestamp("last_processed_date", { withTimezone: true }),
+  transactionDate: timestamp("transaction_date", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  ...timestamps,
 });
-
-// Junction Table - Users to Workspaces (Many-to-Many)
-export const usersToWorkspaces = pgTable(
-  "users_to_workspaces",
-  {
-    userId: varchar("user_id", { length: 255 })
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-
-    workspaceId: uuid("workspace_id")
-      .notNull()
-      .references(() => workspaces.id, { onDelete: "cascade" }),
-
-    role: varchar("role", { length: 50, enum: USER_WORKSPACE_ROLES })
-      .notNull()
-      .default("member"),
-
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => ({
-    pk: primaryKey({ columns: [table.userId, table.workspaceId] }),
-  }),
-);
 
 // =============================================================================
 // RELATIONS
 // =============================================================================
 
-// Users to Workspaces Relations (Junction Table)
-export const usersRelations = relations(users, ({ many }) => ({
-  workspaces: many(usersToWorkspaces),
+export const usersRelations = relations(users, ({ one, many }) => ({
+  budget: one(budgets), // 1:1
+  transactions: many(transactions), // 1:N
 }));
 
-export const workspacesRelations = relations(workspaces, ({ many, one }) => ({
-  users: many(usersToWorkspaces),
-  creator: one(users, {
-    fields: [workspaces.createdBy],
+export const budgetsRelations = relations(budgets, ({ one }) => ({
+  user: one(users, {
+    fields: [budgets.userId],
     references: [users.id],
   }),
 }));
 
-export const usersToWorkspacesRelations = relations(
-  usersToWorkspaces,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [usersToWorkspaces.userId],
-      references: [users.id],
-    }),
-    workspace: one(workspaces, {
-      fields: [usersToWorkspaces.workspaceId],
-      references: [workspaces.id],
-    }),
+export const transactionsRelations = relations(transactions, ({ one }) => ({
+  user: one(users, {
+    fields: [transactions.userId],
+    references: [users.id],
   }),
-);
+}));
 
 // =============================================================================
-// SCHEMAS
+// TYPES
 // =============================================================================
 
-export const WorkspacesCreateSchema = createInsertSchema(workspaces, {
-  name: (schema) => schema.min(3).max(150),
-  description: (schema) => schema.max(500).optional(),
-  createdBy: (schema) => schema.optional(),
-});
+export const transactionSelectSchema = createSelectSchema(transactions);
+export const transactionInsertSchema = createInsertSchema(transactions);
+
+export const typeOptions = typeEnum.enumValues;
+export const categoryOptions = categoryEnum.enumValues;
+export const recurringIntervalOptions = recurringIntervalEnum.enumValues;
