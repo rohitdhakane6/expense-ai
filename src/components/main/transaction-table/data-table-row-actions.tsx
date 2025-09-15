@@ -23,14 +23,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import {
-  Copy,
-  Eye,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  Loader2,
-} from "lucide-react";
+import { Copy, MoreHorizontal, Pencil, Trash2, Loader2 } from "lucide-react";
 import { transactionSelectSchema } from "@/db/schema";
 import { useDeleteTransaction } from "@/hooks/useTransaction";
 import { toast } from "sonner";

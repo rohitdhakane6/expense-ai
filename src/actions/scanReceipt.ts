@@ -1,6 +1,6 @@
 "use server";
 
-import { categoryOptions, transactionInsertSchema } from "@/db/schema";
+import { categoryOptions } from "@/db/schema";
 import { GoogleGenAI } from "@google/genai";
 
 // Initialize the GoogleGenAI client with the API key from environment variables.

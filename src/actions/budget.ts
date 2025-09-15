@@ -80,7 +80,7 @@ export async function updateBudget(input: { amount: string }) {
       // Update existing budget
       const [updatedBudget] = await db
         .update(budgets)
-        .set({ amount: input.amount })
+        .set({ amount: input.amount, isLastAlertSent: false })
         .where(eq(budgets.userId, userId))
         .returning();
       return updatedBudget;
@@ -88,7 +88,7 @@ export async function updateBudget(input: { amount: string }) {
       // Create new budget
       const [newBudget] = await db
         .insert(budgets)
-        .values({ userId, amount: input.amount })
+        .values({ userId, amount: input.amount, isLastAlertSent: false })
         .returning();
       return newBudget;
     }

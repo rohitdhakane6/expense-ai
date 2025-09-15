@@ -1,6 +1,6 @@
 "use client";
 import { useTransactions } from "@/hooks/useTransaction";
-import { columns, Transaction } from "./columns";
+import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
 export default function Page() {

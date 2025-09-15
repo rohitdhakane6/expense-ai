@@ -14,8 +14,6 @@ import { categoryColors } from "@/constant/categoryColors";
 import { categoryOptions } from "@/db/schema";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
 const renderActiveShape = ({
   cx,
   cy,

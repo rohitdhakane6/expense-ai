@@ -1,12 +1,9 @@
-import SignUpViewPage from '@/components/auth/sign-up-view';
-import { Metadata } from 'next';
+import { SignUp } from "@clerk/nextjs";
 
-export const metadata: Metadata = {
-  title: 'Authentication | Sign Up',
-  description: 'Sign Up page for authentication.'
-};
-
-export default async function Page() {
-  
-  return <SignUpViewPage />;
+export default function Page() {
+  return (
+    <div className="bg-muted flex min-h-svh flex-col items-center justify-center">
+      <SignUp />
+    </div>
+  );
 }

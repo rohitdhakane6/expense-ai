@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 
 export const syncUser = inngest.createFunction(
-  { id: "sync-user-from-clerk" },
+  { id: "sync-user-from-clerk", name: "Sync user from clerk" },
   { event: "clerk/user.created" },
   async ({ event }) => {
     try {

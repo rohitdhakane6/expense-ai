@@ -72,6 +72,9 @@ export default function BudgetOverview() {
               <span className="text-lg font-medium">
                 {formatCurrency(data.amount)}
               </span>
+              <span className="text-lg font-medium">
+                {formatCurrency(data.currentExpenses)}
+              </span>
               <Button
                 variant="ghost"
                 size="icon"

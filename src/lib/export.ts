@@ -57,7 +57,7 @@ export const handleExportPDF = <TData>(
   const body = rows.map((row) => {
     const original = row.original as Record<string, any>;
     return visibleColumns.map((col) => {
-      let value = original[col.id as keyof typeof original];
+      const value = original[col.id as keyof typeof original];
       if (value instanceof Date) return value.toISOString().split("T")[0];
       if (value === null || value === undefined) return "";
       return value;

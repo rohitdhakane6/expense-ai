@@ -1,4 +1,4 @@
-import { reset, seed } from "drizzle-seed";
+import { reset } from "drizzle-seed";
 import { db } from "@/db";
 import { users, budgets, transactions } from "@/db/schema";
 import * as schema from "@/db/schema";

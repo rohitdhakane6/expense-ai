@@ -1,6 +1,5 @@
 import "./globals.css";
 export { metadata } from "@/lib/site";
-import { poppins } from "@/lib/font";
 import Provider from "@/app/provider";
 export default function RootLayout({
   children,

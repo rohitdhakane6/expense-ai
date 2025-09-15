@@ -3,7 +3,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { ChevronDown, Phone, CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, Phone, XCircle } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -85,7 +85,6 @@ export function PhoneInput({
   defaultCountry = "US",
   showFlag = true,
   showIcon = true,
-  error = false,
   showValidation = false,
   onValidationChange,
   variant,
@@ -124,21 +123,6 @@ export function PhoneInput({
     setIsValid(valid);
     onValidationChange?.(valid);
   }, [phoneNumber, selectedCountry.code, onValidationChange]);
-
-  const handleCountryChange = (countryCode: string) => {
-    const country = countries.find((c) => c.code === countryCode);
-    if (country) {
-      setSelectedCountry(country);
-      const formattedValue = `${country.phoneCode}${
-        phoneNumber ? ` ${phoneNumber}` : ""
-      }`;
-      const valid =
-        phoneNumber.length > 0
-          ? validatePhoneNumber(phoneNumber, country.code)
-          : false;
-      onChange?.(phoneNumber, formattedValue, country.code, valid);
-    }
-  };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newValue = e.target.value.replace(/[^\d\s\-\(\)]/g, "");

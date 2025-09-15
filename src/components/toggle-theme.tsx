@@ -13,7 +13,12 @@ export function ToggleTheme() {
   }, [resolvedTheme, setTheme]);
 
   return (
-    <Button variant="outline" size="icon" onClick={handleToggle}>
+    <Button
+      className="c cursor-pointer"
+      variant="outline"
+      size="icon"
+      onClick={handleToggle}
+    >
       <MoonStarIcon className="hidden dark:block" />
       <SunIcon className="block dark:hidden" />
       <span className="sr-only">Toggle Theme</span>
