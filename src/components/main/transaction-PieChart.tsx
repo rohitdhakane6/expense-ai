@@ -127,7 +127,7 @@ export default function TransactionPieChart() {
           No transactions found for this month.
         </div>
       ) : (
-        <ResponsiveContainer>
+        <ResponsiveContainer minHeight={300} height={300} width="100%">
           <PieChart>
             <Pie
               activeShape={renderActiveShape}
