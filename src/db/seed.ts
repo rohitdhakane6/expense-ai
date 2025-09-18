@@ -2,7 +2,7 @@ import { reset } from "drizzle-seed";
 import { db } from "@/db";
 import { users, budgets, transactions } from "@/db/schema";
 import * as schema from "@/db/schema";
-import { subDays } from "date-fns";
+import { addMonths, subDays } from "date-fns";
 
 async function main() {
   console.log("🔄 Resetting database...");
@@ -512,6 +512,17 @@ async function main() {
       name: "Streaming Subscriptions",
       category: "entertainment",
       transactionDate: subDays(startDate, 29),
+    },
+    {
+      userId,
+      type: "expense",
+      amount: "100",
+      name: "Milk",
+      category: "groceries",
+      transactionDate: subDays(startDate, 0),
+      isRecurring: true,
+      recurringInterval: "monthly",
+      nextRecurringDate: addMonths(startDate, 1),
     },
   ]);
 

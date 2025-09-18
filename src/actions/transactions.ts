@@ -2,6 +2,7 @@
 
 import { db } from "@/db";
 import { transactions } from "@/db/schema";
+import { getNextRecurringDate } from "@/lib/calculateNextRecurringDate";
 import { auth } from "@clerk/nextjs/server";
 import { and, desc, eq, inArray } from "drizzle-orm";
 
@@ -55,6 +56,13 @@ export async function createTransaction(input: {
         category: input.category,
         isRecurring: input.isRecurring ?? false,
         recurringInterval: input.isRecurring ? input.recurringInterval : null,
+        nextRecurringDate:
+          input.isRecurring && input.recurringInterval
+            ? getNextRecurringDate({
+                interval: input.recurringInterval,
+                fromDate: input.transactionDate,
+              })
+            : null,
       })
       .returning();
 

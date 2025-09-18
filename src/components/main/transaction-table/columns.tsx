@@ -9,6 +9,13 @@ import { transactions } from "@/db/schema";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { categoryColors } from "@/constant/categoryColors";
 import { formatCurrency } from "@/utils/format";
+import { getRecurringIntervalDescription } from "@/lib/calculateNextRecurringDate";
+import { RefreshCcw } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export type Transaction = typeof transactions.$inferSelect;
 
@@ -151,20 +158,25 @@ export const columns: ColumnDef<Transaction>[] = [
       const interval = row.original.recurringInterval;
       const nextDate = row.original.nextRecurringDate;
 
-      if (!isRecurring) {
+      if (!isRecurring && !interval) {
         return <Badge variant="outline">One-time</Badge>;
       }
 
       return (
         <div className="flex flex-col">
-          <Badge className="bg-purple-100 text-purple-700">
-            {interval ? `Every ${interval}` : "Recurring"}
-          </Badge>
-          {nextDate && (
-            <span className="text-muted-foreground text-xs">
-              Next: {format(new Date(nextDate), "MMM dd, yyyy")}
-            </span>
-          )}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge className="bg-purple-100 text-purple-700">
+                <RefreshCcw />
+                {getRecurringIntervalDescription(interval!)}
+              </Badge>
+            </TooltipTrigger>
+            {nextDate && (
+              <TooltipContent>
+                Next Date : {format(nextDate, "MMM dd, yyyy")}
+              </TooltipContent>
+            )}
+          </Tooltip>
         </div>
       );
     },

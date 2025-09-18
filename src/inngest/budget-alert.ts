@@ -1,4 +1,4 @@
-import { inngest } from "@/inngest/client";
+import { inngest } from "@/inngest";
 import { db } from "@/db";
 import { budgets, transactions, users } from "@/db/schema";
 import { sum, eq, and, gte, lte } from "drizzle-orm";
