@@ -73,7 +73,7 @@ export const Navbar = ({ className, navItems }: NavbarProps) => {
     <motion.div
       // ref={ref}
       // IMPORTANT: Change this to class of `fixed` if you want the navbar to be fixed
-      className={cn("sticky inset-x-0 top-10 z-40 w-full", className)}
+      className={cn("sticky inset-x-0 top-10 z-50 w-full", className)}
     >
       <NavBody visible={visible}>
         <Logo />
