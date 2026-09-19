@@ -1,45 +1,15 @@
-import {
-  HeroSection,
-  FeaturesSection,
-  HowItWorksSection,
-  PricingSection,
-  CTASection,
-} from "@/components/landing";
+import { FeaturesSection, Footer, HeroSection } from "@/components/landing";
 import { Navbar } from "@/components/landing/navbar";
 
-export default function page() {
-  const navItems = [
-    {
-      name: "Features",
-      link: "#features",
-    },
-    {
-      name: "Pricing",
-      link: "#pricing",
-    },
-    {
-      name: "How it Works",
-      link: "#how-it-works",
-    },
-  ];
-
+export default function Page() {
   return (
-    <div className="relative w-full">
-      <Navbar navItems={navItems} />
-      {/* Hero Section */}
-      <HeroSection />
-
-      {/* Features Section */}
-      <FeaturesSection />
-
-      {/* How It Works Section */}
-      <HowItWorksSection />
-
-      {/* Pricing Section */}
-      <PricingSection />
-
-      {/* CTA Section */}
-      <CTASection />
+    <div className="flex min-h-screen flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <HeroSection />
+        <FeaturesSection />
+      </main>
+      <Footer />
     </div>
   );
 }
