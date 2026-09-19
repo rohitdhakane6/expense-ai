@@ -7,8 +7,8 @@ export const triggerRecurringTransaction = inngest.createFunction(
   {
     id: "trigger-recurring-transactions",
     name: "Trigger Recurring Transactions",
+    triggers: { cron: "0 0 * * *" },
   },
-  { cron: "0 0 * * *" },
   async ({ step }) => {
     // Step 1: Fetch transactions that are due OR haven't been processed yet
     const recurringTxns = await step.run(
@@ -47,8 +47,8 @@ export const processRecurringTransaction = inngest.createFunction(
       period: "1m",
       key: "event.data.userId",
     },
+    triggers: { event: "transaction.recurring.process" },
   },
-  { event: "transaction.recurring.process" },
   async ({ event, step }) => {
     const { transactionId } = event.data;
 

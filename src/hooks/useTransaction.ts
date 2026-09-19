@@ -6,13 +6,13 @@ import {
 } from "@/actions/transactions";
 import {
   useMutation,
+  useQuery,
   useQueryClient,
-  useSuspenseQuery,
 } from "@tanstack/react-query";
 
 // ✅ Hook for fetching transactions
 export function useTransactions() {
-  return useSuspenseQuery({
+  return useQuery({
     queryKey: ["transactions"],
     queryFn: async () => {
       const res = await getTransactions();

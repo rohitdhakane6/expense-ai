@@ -7,7 +7,6 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { useState } from "react";
 import { formatCurrency } from "@/utils/format";
 import { useTransactions } from "@/hooks/useTransaction";
 import { categoryColors } from "@/constant/categoryColors";
@@ -94,11 +93,10 @@ const renderActiveShape = ({
 };
 
 export default function TransactionPieChart() {
-  const [activeIndex, setActiveIndex] = useState<number>(0);
 
   const { data } = useTransactions();
 
-  const currentMonthData = data.filter((item) => {
+  const currentMonthData = (data ?? []).filter((item) => {
     const txDate = new Date(item.transactionDate);
     const currDate = new Date();
     return (
@@ -131,14 +129,12 @@ export default function TransactionPieChart() {
           <PieChart>
             <Pie
               activeShape={renderActiveShape}
-              activeIndex={activeIndex ?? undefined}
               data={totalsByCategory}
               cx="50%"
               cy="50%"
               innerRadius={60}
               outerRadius={80}
               dataKey="value"
-              onMouseEnter={(_, index) => setActiveIndex(index)}
             >
               {totalsByCategory.map((item, index) => (
                 <Cell

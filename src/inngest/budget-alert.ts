@@ -6,8 +6,11 @@ import { resend } from "@/lib/resend";
 import BudgetAlertEmail from "@/emails/budget-alert-email";
 
 export const checkBudgetAlerts = inngest.createFunction(
-  { id: "check-budget-alerts", name: "Check-Budget-Alerts" },
-  { cron: "0 */6 * * *" }, // Every 6 hours
+  {
+    id: "check-budget-alerts",
+    name: "Check-Budget-Alerts",
+    triggers: { cron: "0 */6 * * *" }, // Every 6 hours
+  },
   async ({ step }) => {
     try {
       // Step 1: Fetch all budgets
