@@ -2,12 +2,20 @@
 
 import { db } from "@/db";
 import { budgets, transactions } from "@/db/schema";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { and, eq, gte, lte, sum } from "drizzle-orm";
+
+async function getUserId() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  return session?.user?.id;
+}
 
 export async function getBudget() {
   try {
-    const { userId } = await auth();
+    const userId = await getUserId();
     if (!userId) throw new Error("Authentication required");
 
     // Fetch single budget (assuming one budget per user)
@@ -66,7 +74,7 @@ export async function getBudget() {
 
 export async function updateBudget(input: { amount: string }) {
   try {
-    const { userId } = await auth();
+    const userId = await getUserId();
     if (!userId) throw new Error("Authentication required");
 
     // Check if budget exists

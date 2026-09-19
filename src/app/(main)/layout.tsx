@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton } from "@/components/user-button";
 import { ToggleTheme } from "@/components/toggle-theme";
 import TransactionForm from "@/components/main/transaction-form";
 import { Edit, LayoutDashboard } from "lucide-react";

@@ -1,7 +1,8 @@
 "use client";
 import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
-import { SignedIn, SignedOut, SignUpButton, UserButton } from "@clerk/nextjs";
+import { useSession } from "@/lib/auth-client";
+import { UserButton } from "@/components/user-button";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import {
   motion,
@@ -10,7 +11,6 @@ import {
   useMotionValueEvent,
 } from "motion/react";
 import Link from "next/link";
-
 import React, { useState } from "react";
 
 interface NavbarProps {
@@ -55,9 +55,9 @@ interface MobileNavMenuProps {
 }
 
 export const Navbar = ({ className, navItems }: NavbarProps) => {
-  // const ref = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const [visible, setVisible] = useState<boolean>(false);
+  const { data: session } = useSession();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (latest > 100) {
@@ -71,25 +71,29 @@ export const Navbar = ({ className, navItems }: NavbarProps) => {
 
   return (
     <motion.div
-      // ref={ref}
-      // IMPORTANT: Change this to class of `fixed` if you want the navbar to be fixed
       className={cn("sticky inset-x-0 top-10 z-50 w-full", className)}
     >
       <NavBody visible={visible}>
         <Logo />
         <NavItems items={navItems} />
         <div className="flex items-center gap-4">
-          <SignedOut>
-            <SignUpButton>
-              <NavbarButton variant="primary">Start Free Trial</NavbarButton>
-            </SignUpButton>
-          </SignedOut>
-          <SignedIn>
-            <NavbarButton>
-              <Link href="/dashboard">Dashboard</Link>
-            </NavbarButton>
-            <UserButton />
-          </SignedIn>
+          {session?.user ? (
+            <>
+              <NavbarButton variant="primary" href="/dashboard">
+                Dashboard
+              </NavbarButton>
+              <UserButton />
+            </>
+          ) : (
+            <>
+              <NavbarButton variant="secondary" href="/sign-in">
+                Sign In
+              </NavbarButton>
+              <NavbarButton variant="primary" href="/sign-up">
+                Start Free Trial
+              </NavbarButton>
+            </>
+          )}
         </div>
       </NavBody>
 
@@ -118,20 +122,37 @@ export const Navbar = ({ className, navItems }: NavbarProps) => {
             </a>
           ))}
           <div className="flex w-full flex-col gap-4">
-            <NavbarButton
-              onClick={() => setIsMobileMenuOpen(false)}
-              variant="secondary"
-              className="w-full"
-            >
-              Sign In
-            </NavbarButton>
-            <NavbarButton
-              onClick={() => setIsMobileMenuOpen(false)}
-              variant="primary"
-              className="w-full"
-            >
-              Start Free Trial
-            </NavbarButton>
+            {session?.user ? (
+              <>
+                <NavbarButton
+                  href="/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  variant="primary"
+                  className="w-full"
+                >
+                  Dashboard
+                </NavbarButton>
+              </>
+            ) : (
+              <>
+                <NavbarButton
+                  href="/sign-in"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  variant="secondary"
+                  className="w-full"
+                >
+                  Sign In
+                </NavbarButton>
+                <NavbarButton
+                  href="/sign-up"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  variant="primary"
+                  className="w-full"
+                >
+                  Start Free Trial
+                </NavbarButton>
+              </>
+            )}
           </div>
         </MobileNavMenu>
       </MobileNav>
@@ -280,7 +301,7 @@ const MobileNavToggle = ({
 
 const NavbarButton = ({
   href,
-  as: Tag = "a",
+  as: Tag = Link,
   children,
   className,
   variant = "primary",
@@ -292,7 +313,7 @@ const NavbarButton = ({
   className?: string;
   variant?: "primary" | "secondary" | "dark" | "gradient";
 } & (
-  | React.ComponentPropsWithoutRef<"a">
+  | React.ComponentPropsWithoutRef<typeof Link>
   | React.ComponentPropsWithoutRef<"button">
 )) => {
   const baseStyles =
@@ -309,7 +330,7 @@ const NavbarButton = ({
 
   return (
     <Tag
-      href={href || undefined}
+      href={href || "#"}
       className={cn(baseStyles, variantStyles[variant], className)}
       {...props}
     >

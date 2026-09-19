@@ -3,15 +3,23 @@
 import { db } from "@/db";
 import { transactions } from "@/db/schema";
 import { getNextRecurringDate } from "@/lib/calculateNextRecurringDate";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { and, desc, eq, inArray } from "drizzle-orm";
+
+async function getUserId() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  return session?.user?.id;
+}
 
 /*
  * Fetch all transactions for the authenticated user
  */
 export async function getTransactions() {
   try {
-    const { userId } = await auth();
+    const userId = await getUserId();
     if (!userId) throw new Error("Authentication required");
 
     const userTransactions = await db
@@ -31,17 +39,17 @@ export async function getTransactions() {
  * Create a new transaction for the authenticated user
  */
 export async function createTransaction(input: {
-  type: (typeof transactions.type.enumValues)[number]; // "income" | "expense"
-  amount: string; // decimal → stored as string
+  type: (typeof transactions.type.enumValues)[number];
+  amount: string;
   name: string;
   transactionDate?: Date;
   description?: string;
-  category?: (typeof transactions.category.enumValues)[number]; // "groceries" | "utilities" | "rent" | "entertainment" | "transportation" | "dining" | "health" | "shopping" | "education" | "travel" | "other"
+  category?: (typeof transactions.category.enumValues)[number];
   isRecurring?: boolean;
-  recurringInterval?: (typeof transactions.recurringInterval.enumValues)[number]; // "daily" | "weekly" | "monthly" | "yearly"
+  recurringInterval?: (typeof transactions.recurringInterval.enumValues)[number];
 }) {
   try {
-    const { userId } = await auth();
+    const userId = await getUserId();
     if (!userId) throw new Error("Authentication required");
 
     const [newTransaction] = await db
@@ -77,11 +85,9 @@ interface DeleteTransactionParams {
   id: string[];
 }
 
-// Supports bulk or single delete
-
 export async function deleteTransaction({ id }: DeleteTransactionParams) {
   try {
-    const { userId } = await auth();
+    const userId = await getUserId();
     if (!userId) throw new Error("Authentication required");
 
     await db
@@ -101,20 +107,19 @@ export async function deleteTransaction({ id }: DeleteTransactionParams) {
   }
 }
 
-// Update transaction
 export async function updateTransaction(input: {
   id: string;
-  type?: (typeof transactions.type.enumValues)[number]; // "income" | "expense"
-  amount?: string; // decimal → stored as string
+  type?: (typeof transactions.type.enumValues)[number];
+  amount?: string;
   name?: string;
   transactionDate?: Date;
   description?: string;
-  category?: (typeof transactions.category.enumValues)[number]; // "groceries" | "utilities" | "rent" | "entertainment" | "transportation" | "dining" | "health" | "shopping" | "education" | "travel" | "other"
+  category?: (typeof transactions.category.enumValues)[number];
   isRecurring?: boolean;
-  recurringInterval?: (typeof transactions.recurringInterval.enumValues)[number]; // "daily" | "weekly" | "monthly" | "yearly"
+  recurringInterval?: (typeof transactions.recurringInterval.enumValues)[number];
 }) {
   try {
-    const { userId } = await auth();
+    const userId = await getUserId();
     if (!userId) throw new Error("Authentication required");
 
     const [updatedTransaction] = await db
