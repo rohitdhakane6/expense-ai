@@ -162,13 +162,13 @@ export default function TransactionChart() {
         <div className="mb-4 flex items-center justify-around">
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Total Income</span>
-            <span className="text-lg font-medium text-green-600">
+            <span className="text-lg font-medium text-success">
               {formatCurrency(totals.income)}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Total Expense</span>
-            <span className="text-lg font-medium text-red-600">
+            <span className="text-lg font-medium text-destructive">
               {formatCurrency(totals.expense)}
             </span>
           </div>
@@ -177,8 +177,8 @@ export default function TransactionChart() {
             <span
               className={`text-lg font-medium ${
                 totals.income - totals.expense >= 0
-                  ? "text-green-600"
-                  : "text-red-600"
+                  ? "text-success"
+                  : "text-destructive"
               }`}
             >
               {formatCurrency(totals.income - totals.expense)}
@@ -223,7 +223,7 @@ export default function TransactionChart() {
                 <Bar
                   dataKey="income"
                   name="Income"
-                  fill="#22c55e"
+                  fill="var(--success)"
                   stackId={view === "a" ? "stack" : undefined}
                   radius={[4, 4, 0, 0]}
                   animationDuration={500}
@@ -233,7 +233,7 @@ export default function TransactionChart() {
                 <Bar
                   dataKey="expense"
                   name="Expense"
-                  fill="#ef4444"
+                  fill="var(--destructive)"
                   stackId={view === "a" ? "stack" : undefined}
                   radius={[4, 4, 0, 0]}
                   animationDuration={500}
@@ -250,7 +250,7 @@ export default function TransactionChart() {
               type="checkbox"
               checked={showIncome}
               onChange={() => setShowIncome(!showIncome)}
-              className="h-4 w-4 accent-green-600"
+              className="h-4 w-4 accent-success"
             />
             Income
           </label>
@@ -259,7 +259,7 @@ export default function TransactionChart() {
               type="checkbox"
               checked={showExpense}
               onChange={() => setShowExpense(!showExpense)}
-              className="h-4 w-4 accent-red-600"
+              className="h-4 w-4 accent-destructive"
             />
             Expense
           </label>

@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { signUp } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { signUp } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -15,38 +18,56 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+// Better Auth's default password bounds; keep the client in sync so it never
+// submits something the server will reject.
+const PASSWORD_MIN = 8;
+const PASSWORD_MAX = 128;
+
+const schema = z.object({
+  name: z.string().trim().min(1, "Enter your name."),
+  email: z.email("Enter a valid email address."),
+  password: z
+    .string()
+    .min(PASSWORD_MIN, `Use at least ${PASSWORD_MIN} characters.`)
+    .max(PASSWORD_MAX, `Use at most ${PASSWORD_MAX} characters.`),
+});
+
+type Values = z.infer<typeof schema>;
 
 export default function SignUpPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const form = useForm<Values>({
+    resolver: zodResolver(schema),
+    defaultValues: { name: "", email: "", password: "" },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await signUp.email({
-        name,
-        email,
-        password,
-      });
-
-      if (res.error) {
-        toast.error(res.error.message || "Failed to sign up");
+  async function onSubmit(values: Values) {
+    const res = await signUp.email(values);
+    if (res.error) {
+      const message = res.error.message ?? "Couldn't create your account.";
+      // Surface "already exists" on the field it belongs to.
+      if (/exist/i.test(message)) {
+        form.setError("email", { message });
       } else {
-        toast.success("Account created successfully!");
-        router.push("/dashboard");
+        form.setError("root", { message });
       }
-    } catch (err: any) {
-      toast.error(err.message || "An unexpected error occurred");
-    } finally {
-      setLoading(false);
+      return;
     }
-  };
+    toast.success("Account created");
+    router.push("/dashboard");
+  }
+
+  const { isSubmitting } = form.formState;
 
   return (
     <Card>
@@ -56,55 +77,84 @@ export default function SignUpPage() {
         </CardTitle>
         <CardDescription>Start tracking where your money goes.</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="John Doe"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input autoComplete="name" placeholder="Your name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      autoComplete="email"
+                      placeholder="name@example.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    At least {PASSWORD_MIN} characters.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create account
-          </Button>
-          <p className="text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/sign-in" className="text-primary font-medium hover:underline">
-              Sign in
-            </Link>
-          </p>
-        </CardFooter>
-      </form>
+            {form.formState.errors.root ? (
+              <p role="alert" className="text-destructive text-sm">
+                {form.formState.errors.root.message}
+              </p>
+            ) : null}
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-4">
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="animate-spin" />}
+              Create account
+            </Button>
+            <p className="text-muted-foreground text-center text-sm">
+              Already have an account?{" "}
+              <Link
+                href="/sign-in"
+                className="text-primary font-medium hover:underline"
+              >
+                Sign in
+              </Link>
+            </p>
+          </CardFooter>
+        </form>
+      </Form>
     </Card>
   );
 }
