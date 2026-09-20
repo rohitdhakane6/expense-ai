@@ -1,32 +1,30 @@
 "use client";
 
-import type { Table } from "@tanstack/react-table";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { DataTableViewOptions } from "./data-table-view-options";
-import { File, X } from "lucide-react";
-import { category_options, type_options } from "./filters";
-
+import type { ReactTable, RowData } from "@tanstack/react-table";
+import { File, FileDown, FileSpreadsheet, X } from "lucide-react";
 import DeleteDialog from "@/components/main/transaction-table/delete-modal";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FileDown, FileSpreadsheet } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { handleExportCSV, handleExportPDF } from "@/lib/export";
+import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import { DataTableViewOptions } from "./data-table-view-options";
+import type { Features } from "./features";
+import { category_options, type_options } from "./filters";
 
-interface DataTableToolbarProps<TData> {
-  table: Table<TData>;
+interface DataTableToolbarProps<TData extends RowData> {
+  table: ReactTable<Features, TData>;
 }
 
-export function DataTableToolbar<TData>({
+export function DataTableToolbar<TData extends RowData>({
   table,
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0;
+  const isFiltered = table.state.columnFilters.length > 0;
   const selectedRows = table.getSelectedRowModel().rows;
 
   return (
@@ -82,7 +80,7 @@ export function DataTableToolbar<TData>({
             <Button
               variant="default"
               size="sm"
-              disabled={table.getPrePaginationRowModel().rows.length === 0}
+              disabled={table.getPrePaginatedRowModel().rows.length === 0}
             >
               <FileDown />
               {table.getSelectedRowModel().rows.length > 0
@@ -97,7 +95,7 @@ export function DataTableToolbar<TData>({
                 const rowsToExport =
                   selectedRows.length > 0
                     ? selectedRows
-                    : table.getPrePaginationRowModel().rows;
+                    : table.getPrePaginatedRowModel().rows;
                 handleExportCSV(rowsToExport, table);
               }}
             >
@@ -110,7 +108,7 @@ export function DataTableToolbar<TData>({
                 const rowsToExport =
                   selectedRows.length > 0
                     ? selectedRows
-                    : table.getPrePaginationRowModel().rows;
+                    : table.getPrePaginatedRowModel().rows;
                 handleExportPDF(rowsToExport, table);
               }}
             >

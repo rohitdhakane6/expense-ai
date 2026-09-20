@@ -1,8 +1,8 @@
 import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { PageHeader } from "@/components/page-header";
 import TransactionChart from "@/components/main/transaction-chart";
 import TransactionTable from "@/components/main/transaction-table";
+import { PageHeader } from "@/components/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Page() {
   return (
@@ -23,6 +23,7 @@ export default function Page() {
                 <Skeleton className="h-6 w-40" />
                 <div className="space-y-2">
                   {Array.from({ length: 5 }).map((_, i) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton rows
                     <div key={i} className="flex space-x-3">
                       <Skeleton className="h-6 w-1/4 rounded-md" />
                       <Skeleton className="h-6 w-1/6 rounded-md" />

@@ -1,55 +1,55 @@
 "use client";
 
-import React, { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import z from "zod";
+import { ReceiptScanner } from "@/components/main/receipt-scanner";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogTrigger,
-  DialogFooter,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { format } from "date-fns";
-
 import {
-  transactionInsertSchema,
-  transactionSelectSchema,
-  typeOptions,
-  categoryOptions,
-  recurringIntervalOptions,
-} from "@/db/schema";
-import { useForm } from "react-hook-form";
-import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import { CalendarIcon } from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { ReceiptScanner } from "@/components/main/receipt-scanner";
+import {
+  categoryOptions,
+  recurringIntervalOptions,
+  transactionInsertSchema,
+  type transactionSelectSchema,
+  typeOptions,
+} from "@/db/schema";
 import {
   useCreateTransaction,
   useUpdateTransaction,
@@ -263,7 +263,7 @@ export default function TransactionForm({
                       {...field}
                       onBlur={(e) => {
                         const val = e.target.value;
-                        if (val && !isNaN(Number(val))) {
+                        if (val && !Number.isNaN(Number(val))) {
                           setValue("amount", Number(val).toFixed(2));
                         }
                       }}

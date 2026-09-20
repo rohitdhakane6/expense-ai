@@ -1,5 +1,5 @@
-import { getBudget, updateBudget } from "@/actions/budget";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getBudget, updateBudget } from "@/actions/budget";
 export function useBudget() {
   return useQuery({
     queryKey: ["budget"],

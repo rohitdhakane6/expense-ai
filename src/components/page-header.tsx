@@ -7,11 +7,11 @@ export function PageHeader({
 }) {
   return (
     <div className="mb-8">
-      <h1 className="text-foreground text-2xl font-semibold tracking-tight">
+      <h1 className="font-semibold text-2xl text-foreground tracking-tight">
         {title}
       </h1>
       {description ? (
-        <p className="text-muted-foreground mt-1 text-sm">{description}</p>
+        <p className="mt-1 text-muted-foreground text-sm">{description}</p>
       ) : null}
     </div>
   );

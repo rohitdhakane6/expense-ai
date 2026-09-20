@@ -1,17 +1,17 @@
 "use client";
 import {
+  Cell,
+  Legend,
   Pie,
   PieChart,
   ResponsiveContainer,
   Sector,
-  Cell,
-  Legend,
 } from "recharts";
-import { formatCurrency } from "@/utils/format";
-import { useTransactions } from "@/hooks/useTransaction";
-import { categoryColors } from "@/constant/categoryColors";
-import { categoryOptions } from "@/db/schema";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { categoryColors } from "@/constant/categoryColors";
+import type { categoryOptions } from "@/db/schema";
+import { useTransactions } from "@/hooks/useTransaction";
+import { formatCurrency } from "@/utils/format";
 
 const renderActiveShape = ({
   cx,
@@ -93,15 +93,14 @@ const renderActiveShape = ({
 };
 
 export default function TransactionPieChart() {
-
   const { data } = useTransactions();
 
   const currentMonthData = (data ?? []).filter((item) => {
     const txDate = new Date(item.transactionDate);
     const currDate = new Date();
     return (
-      txDate.getMonth() == currDate.getMonth() &&
-      txDate.getFullYear() == currDate.getFullYear()
+      txDate.getMonth() === currDate.getMonth() &&
+      txDate.getFullYear() === currDate.getFullYear()
     );
   });
   const totalsByCategory = Object.entries(
@@ -114,14 +113,14 @@ export default function TransactionPieChart() {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base font-semibold">
+        <CardTitle className="font-semibold text-base">
           <div className="flex items-center justify-between">
             Monthly Expense Breakdown
           </div>
         </CardTitle>
       </CardHeader>
       {totalsByCategory.length === 0 ? (
-        <div className="text-muted-foreground flex h-48 items-center justify-center">
+        <div className="flex h-48 items-center justify-center text-muted-foreground">
           No transactions found for this month.
         </div>
       ) : (
@@ -136,9 +135,9 @@ export default function TransactionPieChart() {
               outerRadius={80}
               dataKey="value"
             >
-              {totalsByCategory.map((item, index) => (
+              {totalsByCategory.map((item) => (
                 <Cell
-                  key={`cell-${index}`}
+                  key={item.name}
                   fill={
                     categoryColors[
                       item.name as (typeof categoryOptions)[number]
@@ -150,9 +149,9 @@ export default function TransactionPieChart() {
             <Legend
               content={({ payload }) => (
                 <ul className="flex flex-wrap justify-center gap-3">
-                  {payload?.map((entry, index) => (
+                  {payload?.map((entry) => (
                     <li
-                      key={`item-${index}`}
+                      key={String(entry.value)}
                       className="flex items-center gap-1 capitalize"
                     >
                       <span

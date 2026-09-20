@@ -1,25 +1,26 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { RefreshCcw } from "lucide-react";
+import { DataTableColumnHeader } from "@/components/main/transaction-table/data-table-column-header";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTableColumnHeader } from "@/components/main/transaction-table/data-table-column-header";
-import { transactions } from "@/db/schema";
-import { DataTableRowActions } from "./data-table-row-actions";
-import { categoryColors } from "@/constant/categoryColors";
-import { formatCurrency } from "@/utils/format";
-import { getRecurringIntervalDescription } from "@/lib/calculateNextRecurringDate";
-import { RefreshCcw } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { categoryColors } from "@/constant/categoryColors";
+import type { transactions } from "@/db/schema";
+import { getRecurringIntervalDescription } from "@/lib/calculateNextRecurringDate";
+import { formatCurrency } from "@/utils/format";
+import { DataTableRowActions } from "./data-table-row-actions";
+import type { Features } from "./features";
 
 export type Transaction = typeof transactions.$inferSelect;
 
-export const columns: ColumnDef<Transaction>[] = [
+export const columns: ColumnDef<Features, Transaction>[] = [
   // ✅ Select
   {
     id: "select",

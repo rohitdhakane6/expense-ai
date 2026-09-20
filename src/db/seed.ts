@@ -1,8 +1,8 @@
+import { addMonths, subDays } from "date-fns";
 import { reset } from "drizzle-seed";
 import { db } from "@/db";
-import { users, budgets, transactions } from "@/db/schema";
 import * as schema from "@/db/schema";
-import { addMonths, subDays } from "date-fns";
+import { budgets, transactions, users } from "@/db/schema";
 
 async function main() {
   console.log("🔄 Resetting database...");

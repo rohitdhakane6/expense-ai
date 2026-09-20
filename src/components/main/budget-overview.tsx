@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Check, X, Pencil } from "lucide-react";
+import { Check, Pencil, X } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -17,12 +17,11 @@ export default function BudgetOverview() {
   const [isEditing, setIsEditing] = useState(false);
   const [newBudget, setNewBudget] = useState("");
 
-  // 🔹 Sync newBudget when data is loaded
-  useEffect(() => {
-    if (data?.amount) {
-      setNewBudget(String(data.amount));
-    }
-  }, [data?.amount]);
+  // Seed the draft from the current budget when entering edit mode
+  function startEditing() {
+    setNewBudget(data?.amount ? String(data.amount) : "");
+    setIsEditing(true);
+  }
 
   const percentUsed = data
     ? Math.min(
@@ -33,7 +32,7 @@ export default function BudgetOverview() {
 
   async function handleUpdate() {
     const amount = parseFloat(newBudget);
-    if (isNaN(amount) || amount <= 0) {
+    if (Number.isNaN(amount) || amount <= 0) {
       toast.error("Please enter a valid amount");
       return;
     }
@@ -43,8 +42,8 @@ export default function BudgetOverview() {
 
   return (
     <div className="mb-6 rounded-2xl border p-6">
-      <h2 className="text-xl font-semibold">Budget Overview</h2>
-      <p className="text-muted-foreground mt-1 text-sm">Monthly Budget</p>
+      <h2 className="font-semibold text-xl">Budget Overview</h2>
+      <p className="mt-1 text-muted-foreground text-sm">Monthly Budget</p>
 
       <div className="mt-4">
         {isEditing ? (
@@ -69,17 +68,13 @@ export default function BudgetOverview() {
         ) : data?.amount ? (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-lg font-medium">
+              <span className="font-medium text-lg">
                 {formatCurrency(data.amount)}
               </span>
-              <span className="text-lg font-medium">
+              <span className="font-medium text-lg">
                 {formatCurrency(data.currentExpenses)}
               </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsEditing(true)}
-              >
+              <Button variant="ghost" size="icon" onClick={startEditing}>
                 <Pencil className="h-4 w-4" />
               </Button>
             </div>
@@ -101,7 +96,7 @@ export default function BudgetOverview() {
         ) : (
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">No budget set</span>
-            <Button size="sm" onClick={() => setIsEditing(true)}>
+            <Button size="sm" onClick={startEditing}>
               Set Budget
             </Button>
           </div>

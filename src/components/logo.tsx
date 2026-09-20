@@ -4,6 +4,7 @@ export const Logo = () => (
     {/* Logo */}
     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 shadow-lg">
       <svg
+        aria-hidden="true"
         className="h-6 w-6"
         fill="none"
         stroke="currentColor"
@@ -18,7 +19,7 @@ export const Logo = () => (
       </svg>
     </div>
     {/* Brand Name */}
-    <span className="bg-gradient-to-r bg-clip-text text-2xl font-bold">
+    <span className="bg-gradient-to-r bg-clip-text font-bold text-2xl">
       ExpenseAI
     </span>
   </Link>

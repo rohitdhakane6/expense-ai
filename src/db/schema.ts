@@ -1,15 +1,15 @@
+import { relations } from "drizzle-orm";
 import {
+  boolean,
+  decimal,
+  pgEnum,
   pgTable,
+  text,
+  timestamp,
   uuid,
   varchar,
-  text,
-  decimal,
-  timestamp,
-  boolean,
-  pgEnum,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { createSelectSchema, createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 // =============================================================================
 // SHARED

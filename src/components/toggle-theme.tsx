@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { MoonStarIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
+import { Button } from "@/components/ui/button";
 
 export function ToggleTheme() {
   const { resolvedTheme, setTheme } = useTheme();

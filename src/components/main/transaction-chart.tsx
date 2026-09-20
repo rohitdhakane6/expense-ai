@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { endOfDay, format, startOfDay, subDays } from "date-fns";
+import { useMemo, useState } from "react";
 import {
-  BarChart,
   Bar,
-  XAxis,
-  YAxis,
+  BarChart,
   CartesianGrid,
-  Tooltip,
   Legend,
   ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
-import { format, subDays, startOfDay, endOfDay } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -35,18 +35,18 @@ type DateRangeKey = keyof typeof DATE_RANGES;
 
 // Custom Tooltip Component
 const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
+  if (active && payload?.length) {
     return (
-      <div className="bg-popover border-border rounded-lg border p-3 shadow-lg">
-        <p className="text-foreground mb-2 font-medium">{label}</p>
-        {payload.map((entry: any, index: number) => (
-          <div key={index} className="flex items-center gap-2">
+      <div className="rounded-lg border border-border bg-popover p-3 shadow-lg">
+        <p className="mb-2 font-medium text-foreground">{label}</p>
+        {payload.map((entry: any) => (
+          <div key={entry.name} className="flex items-center gap-2">
             <div
               className="h-3 w-3 rounded-sm"
               style={{ backgroundColor: entry.color }}
             />
             <span className="text-muted-foreground text-sm">{entry.name}:</span>
-            <span className="text-foreground text-sm font-medium">
+            <span className="font-medium text-foreground text-sm">
               {formatCurrency(entry.value)}
             </span>
           </div>
@@ -100,11 +100,12 @@ export default function TransactionChart() {
     return Object.values(grouped).sort((a, b) => {
       const aDate = filtered.find(
         (t) => format(new Date(t.transactionDate), "MMM dd") === a.date,
-      )?.transactionDate!;
+      )?.transactionDate;
       const bDate = filtered.find(
         (t) => format(new Date(t.transactionDate), "MMM dd") === b.date,
-      )?.transactionDate!;
-      return new Date(aDate).getTime() - new Date(bDate).getTime();
+      )?.transactionDate;
+      // Every group came from `filtered`, so the lookups always succeed.
+      return new Date(aDate ?? 0).getTime() - new Date(bDate ?? 0).getTime();
     });
   }, [transactions, dateRange]);
 
@@ -121,7 +122,7 @@ export default function TransactionChart() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base font-normal">
+        <CardTitle className="font-normal text-base">
           Transaction Overview
         </CardTitle>
 
@@ -162,20 +163,20 @@ export default function TransactionChart() {
         <div className="mb-4 flex items-center justify-around">
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Total Income</span>
-            <span className="text-lg font-medium text-success">
+            <span className="font-medium text-lg text-success">
               {formatCurrency(totals.income)}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Total Expense</span>
-            <span className="text-lg font-medium text-destructive">
+            <span className="font-medium text-destructive text-lg">
               {formatCurrency(totals.expense)}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Net Total</span>
             <span
-              className={`text-lg font-medium ${
+              className={`font-medium text-lg ${
                 totals.income - totals.expense >= 0
                   ? "text-success"
                   : "text-destructive"

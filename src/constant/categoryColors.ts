@@ -1,4 +1,4 @@
-import { categoryOptions } from "@/db/schema";
+import type { categoryOptions } from "@/db/schema";
 
 export const categoryColors: Record<
   (typeof categoryOptions)[number],

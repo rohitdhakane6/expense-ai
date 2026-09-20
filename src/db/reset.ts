@@ -1,5 +1,5 @@
-import { db } from "@/db";
 import { reset } from "drizzle-seed";
+import { db } from "@/db";
 import * as schema from "@/db/schema";
 
 export async function main() {

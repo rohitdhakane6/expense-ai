@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { Camera, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { scanReceipt } from "@/actions/scanReceipt";
+import { Button } from "@/components/ui/button";
 
 export function ReceiptScanner({
   onScanComplete,
@@ -54,7 +54,7 @@ export function ReceiptScanner({
       <Button
         type="button"
         variant="outline"
-        className="animate-gradient h-10 w-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-500 text-white transition-opacity hover:text-white hover:opacity-90"
+        className="h-10 w-full animate-gradient bg-gradient-to-br from-orange-500 via-pink-500 to-purple-500 text-white transition-opacity hover:text-white hover:opacity-90"
         onClick={() => fileInputRef.current?.click()}
         disabled={loading}
       >

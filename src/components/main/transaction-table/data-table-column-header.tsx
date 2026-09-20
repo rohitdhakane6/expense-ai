@@ -1,6 +1,10 @@
-import { type Column } from "@tanstack/react-table";
-
-import { cn } from "@/lib/utils";
+import type { Column, RowData } from "@tanstack/react-table";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ChevronsUpDown,
+  EyeOff,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,20 +13,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  ChevronsUpDown,
-  EyeOff,
-} from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { Features } from "./features";
 
-interface DataTableColumnHeaderProps<TData, TValue>
+interface DataTableColumnHeaderProps<TData extends RowData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
-  column: Column<TData, TValue>;
+  column: Column<Features, TData, TValue>;
   title: string;
 }
 
-export function DataTableColumnHeader<TData, TValue>({
+export function DataTableColumnHeader<TData extends RowData, TValue>({
   column,
   title,
   className,
@@ -45,7 +45,7 @@ export function DataTableColumnHeader<TData, TValue>({
             }
             variant="ghost"
             size="sm"
-            className="data-[state=open]:bg-accent -ml-3 h-8"
+            className="-ml-3 h-8 data-[state=open]:bg-accent"
           >
             <span>{title}</span>
             {column.getIsSorted() === "desc" ? (
@@ -63,7 +63,7 @@ export function DataTableColumnHeader<TData, TValue>({
             onClick={() => column.toggleSorting(false)}
           >
             <ArrowUpIcon
-              className="text-muted-foreground/70 mr-2 h-3.5 w-3.5"
+              className="mr-2 h-3.5 w-3.5 text-muted-foreground/70"
               aria-hidden="true"
             />
             Asc
@@ -73,7 +73,7 @@ export function DataTableColumnHeader<TData, TValue>({
             onClick={() => column.toggleSorting(true)}
           >
             <ArrowDownIcon
-              className="text-muted-foreground/70 mr-2 h-3.5 w-3.5"
+              className="mr-2 h-3.5 w-3.5 text-muted-foreground/70"
               aria-hidden="true"
             />
             Desc
@@ -84,7 +84,7 @@ export function DataTableColumnHeader<TData, TValue>({
             onClick={() => column.toggleVisibility(false)}
           >
             <EyeOff
-              className="text-muted-foreground/70 mr-2 h-3.5 w-3.5"
+              className="mr-2 h-3.5 w-3.5 text-muted-foreground/70"
               aria-hidden="true"
             />
             Hide
