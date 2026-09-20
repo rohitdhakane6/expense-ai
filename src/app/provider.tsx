@@ -1,8 +1,9 @@
 "use client";
 
-import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React, { useState } from "react";
+import { ThemeProvider } from "next-themes";
+import type React from "react";
+import { useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 
 export default function Provider({ children }: { children: React.ReactNode }) {

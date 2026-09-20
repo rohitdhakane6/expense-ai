@@ -1,9 +1,9 @@
 "use client";
 
-import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils";
 import { CheckCircle, Phone, XCircle } from "lucide-react";
+import * as React from "react";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -13,13 +13,13 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
-import { countries } from "@/constant/countries";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import { countries } from "@/constant/countries";
+import { cn } from "@/lib/utils";
 
 // Phone validation utility
 const validatePhoneNumber = (
@@ -30,12 +30,12 @@ const validatePhoneNumber = (
   if (!country) return false;
 
   // Remove spaces, dashes, parentheses for validation
-  const cleanNumber = phoneNumber.replace(/[\s\-\(\)]/g, "");
+  const cleanNumber = phoneNumber.replace(/[\s\-()]/g, "");
   return country.pattern.test(cleanNumber);
 };
 
 const phoneInputVariants = cva(
-  "flex w-full items-center gap-2 bg-transparent text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+  "flex w-full items-center gap-2 bg-transparent font-medium text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -44,9 +44,9 @@ const phoneInputVariants = cva(
         ghost: "",
       },
       size: {
-        sm: "h-7 sm:h-8 px-2 text-xs",
-        default: "h-8 sm:h-9 px-2 sm:px-3 text-xs sm:text-sm",
-        lg: "h-12 sm:h-10 px-3 sm:px-4 text-sm",
+        sm: "h-7 px-2 text-xs sm:h-8",
+        default: "h-8 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm",
+        lg: "h-12 px-3 text-sm sm:h-10 sm:px-4",
       },
     },
     defaultVariants: {
@@ -125,7 +125,7 @@ export function PhoneInput({
   }, [phoneNumber, selectedCountry.code, onValidationChange]);
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let newValue = e.target.value.replace(/[^\d\s\-\(\)]/g, "");
+    let newValue = e.target.value.replace(/[^\d\s\-()]/g, "");
 
     // Apply max length limit based on country
     if (
@@ -151,7 +151,7 @@ export function PhoneInput({
       className={cn(phoneInputVariants({ variant, size }), className)}
       {...props}
     >
-      {showIcon && <Phone className="text-muted-foreground h-4 w-4 shrink-0" />}
+      {showIcon && <Phone className="h-4 w-4 shrink-0 text-muted-foreground" />}
 
       <div className="flex shrink-0 items-center gap-1">
         <Popover open={open} onOpenChange={setOpen}>
@@ -189,7 +189,7 @@ export function PhoneInput({
                     >
                       <span className="mr-2">{country.flag}</span>
                       <span>{country.name}</span>
-                      <span className="text-muted-foreground ml-auto text-xs">
+                      <span className="ml-auto text-muted-foreground text-xs">
                         {country.phoneCode}
                       </span>
                     </CommandItem>

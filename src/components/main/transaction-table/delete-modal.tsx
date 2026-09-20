@@ -1,6 +1,4 @@
-import React from "react";
-import { Trash2, Loader2 } from "lucide-react";
-import { useDeleteTransaction } from "@/hooks/useTransaction";
+import { Loader2, Trash2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,6 +11,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useDeleteTransaction } from "@/hooks/useTransaction";
 
 export default function DeleteDialog({
   rowIds,
@@ -61,7 +60,7 @@ export default function DeleteDialog({
             </AlertDialogDescription>
           </AlertDialogHeader>
 
-          <div className="border-destructive/50 bg-destructive/10 text-destructive rounded-md border p-3 text-sm">
+          <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-destructive text-sm">
             ⚠️ Please confirm carefully. Once deleted, data cannot be recovered.
           </div>
 

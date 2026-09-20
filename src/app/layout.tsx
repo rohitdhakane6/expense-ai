@@ -1,5 +1,7 @@
 import "./globals.css";
+
 export { metadata } from "@/lib/site";
+
 import Provider from "@/app/provider";
 export default function RootLayout({
   children,
@@ -14,6 +16,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: static theme-colour bootstrap, no user input
           dangerouslySetInnerHTML={{
             __html: `
               try {

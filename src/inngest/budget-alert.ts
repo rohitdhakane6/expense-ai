@@ -1,9 +1,9 @@
-import { inngest } from "@/inngest";
+import { and, eq, gte, lte, sum } from "drizzle-orm";
 import { db } from "@/db";
 import { budgets, transactions, users } from "@/db/schema";
-import { sum, eq, and, gte, lte } from "drizzle-orm";
-import { resend } from "@/lib/resend";
 import BudgetAlertEmail from "@/emails/budget-alert-email";
+import { inngest } from "@/inngest";
+import { resend } from "@/lib/resend";
 
 export const checkBudgetAlerts = inngest.createFunction(
   {
@@ -52,7 +52,7 @@ export const checkBudgetAlerts = inngest.createFunction(
         });
 
         // Return early if no spending
-        if (totalSpent == 0) {
+        if (Number(totalSpent) === 0) {
           continue; // Skip to next budget instead of returning from entire function
         }
 

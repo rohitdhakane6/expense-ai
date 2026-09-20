@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { UserButton } from "@/components/user-button";
@@ -11,7 +11,7 @@ export function Navbar() {
   const { data: session, isPending } = useSession();
 
   return (
-    <header className="bg-background/80 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 border-b backdrop-blur">
+    <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Logo />
 

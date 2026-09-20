@@ -1,17 +1,10 @@
 "use client";
 
+import type { Row, RowData } from "@tanstack/react-table";
+import { Copy, Loader2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import * as React from "react";
-import { Row } from "@tanstack/react-table";
-
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
+import TransactionForm from "@/components/main/transaction-form";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,18 +15,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
-import { Copy, MoreHorizontal, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { transactionSelectSchema } from "@/db/schema";
 import { useDeleteTransaction } from "@/hooks/useTransaction";
-import { toast } from "sonner";
-import TransactionForm from "@/components/main/transaction-form";
+import type { Features } from "./features";
 
-interface DataTableRowActionsProps<TData> {
-  row: Row<TData>;
+interface DataTableRowActionsProps<TData extends RowData> {
+  row: Row<Features, TData>;
 }
 
-export function DataTableRowActions<TData>({
+export function DataTableRowActions<TData extends RowData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const [showDeleteDialog, setShowDeleteDialog] =
@@ -77,7 +76,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="data-[state=open]:bg-muted flex h-8 w-8 p-0"
+            className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
           >
             <MoreHorizontal className="h-4 w-4" />
             <span className="sr-only">Open menu</span>
@@ -113,7 +112,7 @@ export function DataTableRowActions<TData>({
           </TransactionForm>
 
           <DropdownMenuItem
-            className="text-destructive focus:text-destructive cursor-pointer"
+            className="cursor-pointer text-destructive focus:text-destructive"
             onClick={handleDeleteClick}
           >
             <Trash2 className="mr-2 h-4 w-4" />
@@ -132,7 +131,7 @@ export function DataTableRowActions<TData>({
             </AlertDialogDescription>
           </AlertDialogHeader>
 
-          <div className="border-destructive/50 bg-destructive/10 text-destructive rounded-md border p-3 text-sm">
+          <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-destructive text-sm">
             ⚠️ Please confirm carefully. Once deleted, data cannot be recovered.
           </div>
 

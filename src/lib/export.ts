@@ -1,16 +1,18 @@
-import { Table, Row } from "@tanstack/react-table";
+import type { Row, RowData, Table } from "@tanstack/react-table";
+import { download, generateCsv, mkConfig } from "export-to-csv";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import { generateCsv, download, mkConfig } from "export-to-csv";
+import type { Features } from "@/components/main/transaction-table/features";
+
 const csvConfig = mkConfig({
   fieldSeparator: ",",
   decimalSeparator: ".",
   useKeysAsHeaders: true,
   filename: `ExpenseAI_Transactions_${new Date().toISOString().split("T")[0]}`,
 });
-export const handleExportCSV = <TData>(
-  rows: Row<TData>[],
-  table: Table<TData>,
+export const handleExportCSV = <TData extends RowData>(
+  rows: Row<Features, TData>[],
+  table: Table<Features, TData>,
 ): void => {
   // Get only visible columns
   const visibleColumns = table
@@ -42,9 +44,9 @@ export const handleExportCSV = <TData>(
 
   download(csvConfig)(csv);
 };
-export const handleExportPDF = <TData>(
-  rows: Row<TData>[],
-  table: Table<TData>,
+export const handleExportPDF = <TData extends RowData>(
+  rows: Row<Features, TData>[],
+  table: Table<Features, TData>,
 ) => {
   const visibleColumns = table
     .getAllLeafColumns()

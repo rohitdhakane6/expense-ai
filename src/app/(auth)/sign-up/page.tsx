@@ -1,15 +1,13 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { signUp } from "@/lib/auth-client";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -27,6 +25,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { signUp } from "@/lib/auth-client";
 
 // Better Auth's default password bounds; keep the client in sync so it never
 // submits something the server will reject.
@@ -72,7 +72,7 @@ export default function SignUpPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-semibold tracking-tight">
+        <CardTitle className="font-semibold text-xl tracking-tight">
           Create your account
         </CardTitle>
         <CardDescription>Start tracking where your money goes.</CardDescription>
@@ -87,7 +87,11 @@ export default function SignUpPage() {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input autoComplete="name" placeholder="Your name" {...field} />
+                    <Input
+                      autoComplete="name"
+                      placeholder="Your name"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -143,11 +147,11 @@ export default function SignUpPage() {
               {isSubmitting && <Loader2 className="animate-spin" />}
               Create account
             </Button>
-            <p className="text-muted-foreground text-center text-sm">
+            <p className="text-center text-muted-foreground text-sm">
               Already have an account?{" "}
               <Link
                 href="/sign-in"
-                className="text-primary font-medium hover:underline"
+                className="font-medium text-primary hover:underline"
               >
                 Sign in
               </Link>

@@ -1,0 +1,78 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": ["**", "!.next", "!drizzle", "!next-env.d.ts", "!public"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 80
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "domains": {
+      "next": "recommended",
+      "react": "recommended"
+    },
+    "rules": {
+      "preset": "recommended",
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "fix": "safe",
+          "options": {
+            "functions": ["cn", "clsx", "cva"]
+          }
+        }
+      }
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["src/components/ui/**"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "preset": "none"
+          },
+          "correctness": {
+            "useExhaustiveDependencies": "off"
+          },
+          "suspicious": {
+            "noArrayIndexKey": "off"
+          }
+        }
+      }
+    }
+  ],
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  }
+}

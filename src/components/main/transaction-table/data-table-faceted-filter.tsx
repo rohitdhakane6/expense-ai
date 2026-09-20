@@ -1,7 +1,6 @@
-import * as React from "react";
-import { Column } from "@tanstack/react-table";
-
-import { cn } from "@/lib/utils";
+import type { Column, RowData } from "@tanstack/react-table";
+import { CheckIcon, PlusCircle } from "lucide-react";
+import type * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +18,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { CheckIcon, PlusCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { Features } from "./features";
 
 export type FilterOption = {
   label: string;
@@ -27,13 +27,13 @@ export type FilterOption = {
   icon?: React.ComponentType<{ className?: string }>;
 };
 
-interface DataTableFacetedFilter<TData, TValue> {
-  column?: Column<TData, TValue>;
+interface DataTableFacetedFilter<TData extends RowData, TValue> {
+  column?: Column<Features, TData, TValue>;
   title?: string;
   options: FilterOption[];
 }
 
-export function DataTableFacetedFilter<TData, TValue>({
+export function DataTableFacetedFilter<TData extends RowData, TValue>({
   column,
   title,
   options,
@@ -107,7 +107,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                   >
                     <div
                       className={cn(
-                        "border-primary mr-2 flex h-4 w-4 items-center justify-center rounded-sm border",
+                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
                         isSelected
                           ? "bg-primary text-primary-foreground"
                           : "opacity-50 [&_svg]:invisible",
@@ -116,7 +116,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                       <CheckIcon className={cn("h-4 w-4")} />
                     </div>
                     {option.icon && (
-                      <option.icon className="text-muted-foreground mr-2 h-4 w-4" />
+                      <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                     )}
                     <span>{option.label}</span>
                     {facets?.get(option.value) && (

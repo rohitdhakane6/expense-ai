@@ -1,5 +1,5 @@
-import { addDays, addWeeks, addMonths, addYears, startOfDay } from "date-fns";
-import { recurringIntervalOptions } from "@/db/schema";
+import { addDays, addMonths, addWeeks, addYears, startOfDay } from "date-fns";
+import type { recurringIntervalOptions } from "@/db/schema";
 
 /**
  * Get the next recurring date based on interval

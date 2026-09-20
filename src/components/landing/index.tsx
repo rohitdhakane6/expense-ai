@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowRight, BellRing, PieChart, ScanLine } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/lib/auth-client";
 
@@ -11,13 +11,13 @@ export function HeroSection() {
 
   return (
     <section className="mx-auto max-w-3xl px-6 pt-24 pb-20 text-center sm:pt-32 sm:pb-28">
-      <p className="text-muted-foreground mb-4 text-sm font-medium tracking-wide uppercase">
+      <p className="mb-4 font-medium text-muted-foreground text-sm uppercase tracking-wide">
         Personal finance, simplified
       </p>
-      <h1 className="text-foreground text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
+      <h1 className="text-balance font-semibold text-4xl text-foreground tracking-tight sm:text-6xl">
         Know where your money goes.
       </h1>
-      <p className="text-muted-foreground mx-auto mt-6 max-w-2xl text-lg text-pretty sm:text-xl">
+      <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
         Snap a receipt and let AI log it. Set a budget and get an email before
         you blow through it. See your whole month at a glance.
       </p>
@@ -75,10 +75,10 @@ export function FeaturesSection() {
       <div className="mx-auto grid max-w-6xl gap-px px-6 py-20 sm:grid-cols-3 sm:py-24">
         {features.map(({ icon: Icon, title, description }) => (
           <div key={title} className="flex flex-col gap-4 py-8 sm:px-8 sm:py-0">
-            <div className="bg-muted text-foreground flex h-10 w-10 items-center justify-center rounded-lg">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-foreground">
               <Icon className="h-5 w-5" aria-hidden />
             </div>
-            <h2 className="text-foreground text-lg font-semibold">{title}</h2>
+            <h2 className="font-semibold text-foreground text-lg">{title}</h2>
             <p className="text-muted-foreground text-sm leading-relaxed">
               {description}
             </p>
@@ -92,7 +92,7 @@ export function FeaturesSection() {
 export function Footer() {
   return (
     <footer className="border-t">
-      <div className="text-muted-foreground mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-8 text-sm sm:flex-row">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-8 text-muted-foreground text-sm sm:flex-row">
         <span>ExpenseAI</span>
         <span>
           Built by{" "}

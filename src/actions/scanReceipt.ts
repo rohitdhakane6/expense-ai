@@ -1,7 +1,7 @@
 "use server";
 
-import { categoryOptions } from "@/db/schema";
 import { GoogleGenAI } from "@google/genai";
+import { categoryOptions } from "@/db/schema";
 
 // Initialize the GoogleGenAI client with the API key from environment variables.
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });

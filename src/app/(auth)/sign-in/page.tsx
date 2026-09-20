@@ -1,15 +1,13 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { signIn } from "@/lib/auth-client";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -26,6 +24,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { signIn } from "@/lib/auth-client";
 
 const schema = z.object({
   email: z.email("Enter a valid email address."),
@@ -58,7 +58,7 @@ export default function SignInPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-semibold tracking-tight">
+        <CardTitle className="font-semibold text-xl tracking-tight">
           Welcome back
         </CardTitle>
         <CardDescription>Sign in to your ExpenseAI account.</CardDescription>
@@ -113,11 +113,11 @@ export default function SignInPage() {
               {isSubmitting && <Loader2 className="animate-spin" />}
               Sign in
             </Button>
-            <p className="text-muted-foreground text-center text-sm">
+            <p className="text-center text-muted-foreground text-sm">
               Don&apos;t have an account?{" "}
               <Link
                 href="/sign-up"
-                className="text-primary font-medium hover:underline"
+                className="font-medium text-primary hover:underline"
               >
                 Sign up
               </Link>
